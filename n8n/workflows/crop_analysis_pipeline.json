@@ -1,0 +1,235 @@
+{
+  "name": "Crop Analysis Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "crop-analysis",
+        "responseMode": "responseNode"
+      },
+      "id": "webhook-crop-analysis",
+      "name": "Crop Analysis Request",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "crop-analysis-webhook"
+    },
+    {
+      "parameters": {
+        "functionCode": "// Extract and validate input data\nconst input = $input.first().json;\n\nconst validated = {\n  location: input.location || {},\n  soilType: input.soilType || 'loamy',\n  season: input.season || 'spring',\n  farmSize: input.farmSize || '5 acres',\n  waterAvailability: input.waterAvailability || 'moderate',\n  budget: input.budget || 'moderate',\n  timestamp: new Date().toISOString()\n};\n\nreturn validated;"
+      },
+      "id": "function-validate-input",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://api:3000/api/crops/recommend",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json}}"
+      },
+      "id": "http-get-crop-recommendations",
+      "name": "Get Crop Recommendations",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Extract top 3 recommended crops\nconst response = $input.first().json;\nconst crops = response.recommendations?.crops || [];\nconst topCrops = crops.slice(0, 3);\n\nreturn topCrops.map(crop => ({\n  cropName: crop.name,\n  suitabilityScore: crop.suitabilityScore,\n  location: response.location,\n  soilType: $node[\"Validate Input\"].json.soilType\n}));"
+      },
+      "id": "function-extract-top-crops",
+      "name": "Extract Top Crops",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://api:3000/api/fertilizer/recommend",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "crop",
+              "value": "={{$json[\"cropName\"]}}"
+            },
+            {
+              "name": "soilAnalysis",
+              "value": "={{$node[\"Validate Input\"].json.soilType}}"
+            }
+          ]
+        }
+      },
+      "id": "http-get-fertilizer-for-crops",
+      "name": "Get Fertilizer for Each Crop",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://api:3000/api/water/irrigation-schedule",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "crop",
+              "value": "={{$json[\"cropName\"]}}"
+            },
+            {
+              "name": "soilType",
+              "value": "={{$node[\"Validate Input\"].json.soilType}}"
+            },
+            {
+              "name": "climate",
+              "value": "temperate"
+            }
+          ]
+        }
+      },
+      "id": "http-get-water-schedule",
+      "name": "Get Water Schedule",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1050, 450]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Combine all data for comprehensive analysis\nconst cropRecommendations = $node[\"Get Crop Recommendations\"].json;\nconst fertilizerData = $input.all();\n\nconst comprehensiveAnalysis = {\n  success: true,\n  timestamp: new Date().toISOString(),\n  summary: {\n    topCrops: cropRecommendations.recommendations?.crops?.slice(0, 3).map(c => c.name) || [],\n    location: cropRecommendations.location,\n    analysisType: 'comprehensive'\n  },\n  details: {\n    cropRecommendations,\n    fertilizerPlans: fertilizerData,\n    nextSteps: [\n      'Review crop recommendations',\n      'Prepare soil according to fertilizer plan',\n      'Set up irrigation system',\n      'Order seeds and inputs',\n      'Create planting schedule'\n    ]\n  },\n  metadata: {\n    processedBy: 'crop-analysis-pipeline',\n    agentsInvolved: 3\n  }\n};\n\nreturn comprehensiveAnalysis;"
+      },
+      "id": "function-combine-analysis",
+      "name": "Combine Complete Analysis",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "insertOne",
+        "collection": "crop_analyses",
+        "fields": "={{$json}}"
+      },
+      "id": "mongodb-save-analysis",
+      "name": "Save Analysis to DB",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [1450, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}"
+      },
+      "id": "webhook-send-response",
+      "name": "Send Complete Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1650, 300]
+    }
+  ],
+  "connections": {
+    "Crop Analysis Request": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Get Crop Recommendations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Crop Recommendations": {
+      "main": [
+        [
+          {
+            "node": "Extract Top Crops",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Top Crops": {
+      "main": [
+        [
+          {
+            "node": "Get Fertilizer for Each Crop",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Water Schedule",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Fertilizer for Each Crop": {
+      "main": [
+        [
+          {
+            "node": "Combine Complete Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Water Schedule": {
+      "main": [
+        [
+          {
+            "node": "Combine Complete Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Complete Analysis": {
+      "main": [
+        [
+          {
+            "node": "Save Analysis to DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Analysis to DB": {
+      "main": [
+        [
+          {
+            "node": "Send Complete Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "tags": []
+}

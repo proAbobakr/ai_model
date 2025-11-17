@@ -1,0 +1,306 @@
+{
+  "name": "Farmer Platform - Main Orchestrator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "farmer-query",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-main",
+      "name": "Farmer Query Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "farmer-main-webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"queryType\"]}}",
+              "operation": "equals",
+              "value2": "crop_recommendation"
+            }
+          ]
+        }
+      },
+      "id": "switch-query-type",
+      "name": "Route Query Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://api:3000/api/crops/recommend",
+        "authentication": "genericCredentialType",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "location",
+              "value": "={{$json[\"location\"]}}"
+            },
+            {
+              "name": "soilType",
+              "value": "={{$json[\"soilType\"]}}"
+            },
+            {
+              "name": "season",
+              "value": "={{$json[\"season\"]}}"
+            },
+            {
+              "name": "farmSize",
+              "value": "={{$json[\"farmSize\"]}}"
+            }
+          ]
+        }
+      },
+      "id": "http-crop-recommendation",
+      "name": "Call Crop Advisor Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [650, 200]
+    },
+    {
+      "parameters": {
+        "url": "http://api:3000/api/fertilizer/recommend",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "crop",
+              "value": "={{$json[\"crop\"]}}"
+            },
+            {
+              "name": "soilAnalysis",
+              "value": "={{$json[\"soilAnalysis\"]}}"
+            },
+            {
+              "name": "growthStage",
+              "value": "={{$json[\"growthStage\"]}}"
+            }
+          ]
+        }
+      },
+      "id": "http-fertilizer-recommendation",
+      "name": "Call Fertilizer Advisor Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://api:3000/api/farming/techniques",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "crop",
+              "value": "={{$json[\"crop\"]}}"
+            },
+            {
+              "name": "farmingStyle",
+              "value": "={{$json[\"farmingStyle\"]}}"
+            }
+          ]
+        }
+      },
+      "id": "http-farming-techniques",
+      "name": "Call Farming Techniques Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [650, 400]
+    },
+    {
+      "parameters": {
+        "url": "http://api:3000/api/water/irrigation-schedule",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "crop",
+              "value": "={{$json[\"crop\"]}}"
+            },
+            {
+              "name": "soilType",
+              "value": "={{$json[\"soilType\"]}}"
+            },
+            {
+              "name": "climate",
+              "value": "={{$json[\"climate\"]}}"
+            },
+            {
+              "name": "irrigationSystem",
+              "value": "={{$json[\"irrigationSystem\"]}}"
+            }
+          ]
+        }
+      },
+      "id": "http-water-management",
+      "name": "Call Water Management Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [650, 500]
+    },
+    {
+      "parameters": {
+        "operation": "insertOne",
+        "collection": "farmer_queries",
+        "fields": "={{$json}}"
+      },
+      "id": "mongodb-log-query",
+      "name": "Log Query to Database",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}"
+      },
+      "id": "webhook-response",
+      "name": "Send Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Aggregate all agent responses\nconst cropRecommendation = $input.item(0).json;\nconst fertilizerAdvice = $input.item(1)?.json;\nconst farmingTips = $input.item(2)?.json;\nconst waterSchedule = $input.item(3)?.json;\n\nreturn {\n  success: true,\n  timestamp: new Date().toISOString(),\n  data: {\n    cropRecommendation,\n    fertilizerAdvice,\n    farmingTips,\n    waterSchedule\n  },\n  metadata: {\n    processedBy: 'n8n-orchestrator',\n    agentsUsed: ['crop', 'fertilizer', 'farming', 'water']\n  }\n};"
+      },
+      "id": "function-aggregate",
+      "name": "Aggregate Responses",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [850, 400]
+    }
+  ],
+  "connections": {
+    "Farmer Query Webhook": {
+      "main": [
+        [
+          {
+            "node": "Route Query Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Query Type": {
+      "main": [
+        [
+          {
+            "node": "Call Crop Advisor Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call Fertilizer Advisor Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call Farming Techniques Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call Water Management Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Crop Advisor Agent": {
+      "main": [
+        [
+          {
+            "node": "Log Query to Database",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Aggregate Responses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Fertilizer Advisor Agent": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Responses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Farming Techniques Agent": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Responses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Water Management Agent": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Responses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Responses": {
+      "main": [
+        [
+          {
+            "node": "Send Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Query to Database": {
+      "main": [
+        [
+          {
+            "node": "Send Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "tags": []
+}
