@@ -34,6 +34,8 @@
     "axios": "^1.6.2",
     "openai": "^4.24.1",
     "@anthropic-ai/sdk": "^0.10.0",
+    "@google/generative-ai": "^0.2.1",
+    "grok-sdk": "^1.0.0",
     "joi": "^17.11.0",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
@@ -45,6 +47,7 @@
     "langchain": "^0.1.0",
     "@langchain/openai": "^0.0.10",
     "@langchain/anthropic": "^0.0.5",
+    "@langchain/google-genai": "^0.0.5",
     "n8n": "^1.19.0",
     "uuid": "^9.0.1"
   },

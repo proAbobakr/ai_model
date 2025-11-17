@@ -1,22 +1,15 @@
-import Anthropic from '@anthropic-ai/sdk';
-import OpenAI from 'openai';
-import { config } from '../../config/config.js';
+import { aiClient } from '../../config/ai-client.js';
 import { logger } from '../../config/logger.js';
 
 /**
  * Fertilizer Advisor AI Agent
  * Provides intelligent fertilizer recommendations including NPK ratios,
  * micronutrients, organic amendments, and application schedules
+ * Supports multiple AI providers: OpenAI, Anthropic, Gemini, Kimi2, Grok
  */
 class FertilizerAdvisorAgent {
   constructor() {
-    this.anthropic = new Anthropic({
-      apiKey: config.anthropicApiKey,
-    });
-    this.openai = new OpenAI({
-      apiKey: config.openaiApiKey,
-    });
-    this.model = config.aiProvider === 'anthropic' ? config.anthropicModel : config.openaiModel;
+    this.aiClient = aiClient;
 
     // Standard NPK requirements for common crops (baseline)
     this.cropNutrientBaseline = {
@@ -409,53 +402,22 @@ Format as calendar-based JSON schedule.`;
    */
   async getAIResponse(context) {
     try {
-      if (config.aiProvider === 'anthropic') {
-        const response = await this.anthropic.messages.create({
-          model: this.model,
-          max_tokens: 4000,
+      const systemPrompt = 'You are an expert soil scientist and fertilizer specialist.';
+      const response = await this.aiClient.generateCompletion(
+        systemPrompt,
+        context,
+        {
           temperature: 0.7,
-          messages: [{
-            role: 'user',
-            content: context
-          }]
-        });
+          maxTokens: 4000
+        }
+      );
 
-        return this.parseResponse(response.content[0].text);
-      } else {
-        const response = await this.openai.chat.completions.create({
-          model: this.model,
-          messages: [{
-            role: 'system',
-            content: 'You are an expert soil scientist and fertilizer specialist.'
-          }, {
-            role: 'user',
-            content: context
-          }],
-          temperature: 0.7,
-          max_tokens: 4000,
-          response_format: { type: 'json_object' }
-        });
+      logger.info(`Got fertilizer recommendation from ${response.provider} (${response.model})`);
 
-        return JSON.parse(response.choices[0].message.content);
-      }
+      return response.parsed || { content: response.content, format: 'text' };
     } catch (error) {
       logger.error('Error getting AI response', { error: error.message });
       throw error;
-    }
-  }
-
-  /**
-   * Parse response
-   */
-  parseResponse(content) {
-    try {
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-      return { content, format: 'text' };
-    } catch (error) {
-      return { content, format: 'text' };
     }
   }
 }

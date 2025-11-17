@@ -4,6 +4,7 @@ A comprehensive AI system using n8n workflows and specialized AI agents to provi
 
 ## 🌾 Features
 
+- **Multiple AI Provider Support**: Choose from OpenAI, Anthropic Claude, Google Gemini, Kimi2, or Grok
 - **Crop Recommendation System**: AI-powered suggestions based on location, climate, soil type, and season
 - **Farming Techniques Education**: Best practices, modern techniques, and traditional methods
 - **Fertilizer & Mineral Advisor**: Customized fertilizer recommendations with NPK ratios and micronutrients
@@ -72,7 +73,12 @@ ai_model/
 - Docker and Docker Compose
 - n8n (self-hosted or cloud)
 - MongoDB or PostgreSQL
-- API keys for AI providers (OpenAI, Anthropic, etc.)
+- API key for at least one AI provider:
+  - **OpenAI** (GPT-4, GPT-3.5)
+  - **Anthropic** (Claude 3)
+  - **Google Gemini** (Gemini Pro)
+  - **Moonshot AI** (Kimi2)
+  - **xAI** (Grok)
 
 ### Installation
 
@@ -128,15 +134,46 @@ DB_HOST=localhost
 DB_PORT=27017
 DB_NAME=farmer_learning_platform
 
-# AI Provider Keys
+# AI Provider Selection (openai, anthropic, gemini, kimi2, grok)
+AI_PROVIDER=anthropic
+
+# AI Provider Keys (configure at least one)
 OPENAI_API_KEY=your_openai_key
+OPENAI_MODEL=gpt-4-turbo-preview
+
 ANTHROPIC_API_KEY=your_anthropic_key
+ANTHROPIC_MODEL=claude-3-sonnet-20240229
+
+GEMINI_API_KEY=your_gemini_key
+GEMINI_MODEL=gemini-pro
+
+KIMI2_API_KEY=your_kimi2_key
+KIMI2_MODEL=moonshot-v1-8k
+KIMI2_BASE_URL=https://api.moonshot.cn/v1
+
+GROK_API_KEY=your_grok_key
+GROK_MODEL=grok-1
+GROK_BASE_URL=https://api.x.ai/v1
 
 # N8N Configuration
 N8N_HOST=localhost
 N8N_PORT=5678
 N8N_WEBHOOK_URL=http://localhost:5678/webhook
 ```
+
+### Supported AI Providers
+
+The platform supports multiple AI providers. You can switch between them by setting the `AI_PROVIDER` environment variable:
+
+| Provider | Model Options | API Key Source |
+|----------|--------------|----------------|
+| **OpenAI** | gpt-4-turbo-preview, gpt-4, gpt-3.5-turbo | [platform.openai.com](https://platform.openai.com) |
+| **Anthropic** | claude-3-opus, claude-3-sonnet, claude-3-haiku | [console.anthropic.com](https://console.anthropic.com) |
+| **Google Gemini** | gemini-pro, gemini-pro-vision | [ai.google.dev](https://ai.google.dev) |
+| **Kimi2 (Moonshot)** | moonshot-v1-8k, moonshot-v1-32k, moonshot-v1-128k | [platform.moonshot.cn](https://platform.moonshot.cn) |
+| **Grok (xAI)** | grok-1 | [console.x.ai](https://console.x.ai) |
+
+**Note:** You only need to configure one AI provider, but you can configure multiple and switch between them.
 
 ## 📚 API Endpoints
 

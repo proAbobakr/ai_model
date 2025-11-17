@@ -1,22 +1,15 @@
-import Anthropic from '@anthropic-ai/sdk';
-import OpenAI from 'openai';
-import { config } from '../../config/config.js';
+import { aiClient } from '../../config/ai-client.js';
 import { logger } from '../../config/logger.js';
 import cropKnowledgeBase from '../../data/knowledge_base/crops.js';
 
 /**
  * Crop Advisor AI Agent
  * Provides intelligent crop recommendations based on location, climate, soil, and other factors
+ * Supports multiple AI providers: OpenAI, Anthropic, Gemini, Kimi2, Grok
  */
 class CropAdvisorAgent {
   constructor() {
-    this.anthropic = new Anthropic({
-      apiKey: config.anthropicApiKey,
-    });
-    this.openai = new OpenAI({
-      apiKey: config.openaiApiKey,
-    });
-    this.model = config.aiProvider === 'anthropic' ? config.anthropicModel : config.openaiModel;
+    this.aiClient = aiClient;
   }
 
   /**
@@ -159,65 +152,31 @@ Format your response as JSON with the following structure:
 
   /**
    * Get recommendation from AI model
+   * Now supports all configured AI providers
    */
   async getAIRecommendation(context) {
     try {
-      if (config.aiProvider === 'anthropic') {
-        const response = await this.anthropic.messages.create({
-          model: this.model,
-          max_tokens: 4000,
+      const systemPrompt = 'You are an expert agricultural advisor specializing in crop selection and farming recommendations.';
+      const response = await this.aiClient.generateCompletion(
+        systemPrompt,
+        context,
+        {
           temperature: 0.7,
-          messages: [{
-            role: 'user',
-            content: context
-          }]
-        });
+          maxTokens: 4000
+        }
+      );
 
-        const content = response.content[0].text;
-        return this.parseAIResponse(content);
-      } else {
-        const response = await this.openai.chat.completions.create({
-          model: this.model,
-          messages: [{
-            role: 'system',
-            content: 'You are an expert agricultural advisor.'
-          }, {
-            role: 'user',
-            content: context
-          }],
-          temperature: 0.7,
-          max_tokens: 4000,
-          response_format: { type: 'json_object' }
-        });
+      logger.info(`Got recommendation from ${response.provider} (${response.model})`);
 
-        return JSON.parse(response.choices[0].message.content);
-      }
-    } catch (error) {
-      logger.error('Error getting AI recommendation', { error: error.message });
-      throw error;
-    }
-  }
-
-  /**
-   * Parse AI response
-   */
-  parseAIResponse(content) {
-    try {
-      // Try to extract JSON from the response
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-      throw new Error('Could not parse JSON from AI response');
-    } catch (error) {
-      logger.error('Error parsing AI response', { error: error.message });
-      // Return a fallback structure
-      return {
+      return response.parsed || {
         crops: [],
-        generalAdvice: content,
+        generalAdvice: response.content,
         riskFactors: [],
         successTips: []
       };
+    } catch (error) {
+      logger.error('Error getting AI recommendation', { error: error.message });
+      throw error;
     }
   }
 

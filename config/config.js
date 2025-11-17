@@ -32,10 +32,28 @@ export const config = {
 
   // AI Providers
   aiProvider: process.env.AI_PROVIDER || 'anthropic',
+
+  // OpenAI
   openaiApiKey: process.env.OPENAI_API_KEY || '',
   openaiModel: process.env.OPENAI_MODEL || 'gpt-4-turbo-preview',
+
+  // Anthropic
   anthropicApiKey: process.env.ANTHROPIC_API_KEY || '',
   anthropicModel: process.env.ANTHROPIC_MODEL || 'claude-3-sonnet-20240229',
+
+  // Google Gemini
+  geminiApiKey: process.env.GEMINI_API_KEY || '',
+  geminiModel: process.env.GEMINI_MODEL || 'gemini-pro',
+
+  // Kimi2 (Moonshot AI)
+  kimi2ApiKey: process.env.KIMI2_API_KEY || '',
+  kimi2Model: process.env.KIMI2_MODEL || 'moonshot-v1-8k',
+  kimi2BaseUrl: process.env.KIMI2_BASE_URL || 'https://api.moonshot.cn/v1',
+
+  // Grok (xAI)
+  grokApiKey: process.env.GROK_API_KEY || '',
+  grokModel: process.env.GROK_MODEL || 'grok-1',
+  grokBaseUrl: process.env.GROK_BASE_URL || 'https://api.x.ai/v1',
 
   // N8N
   n8n: {
