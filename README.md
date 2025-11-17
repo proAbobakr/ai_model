@@ -1,31 +1,25 @@
 # AI-Powered Farmer Learning Platform
 
-A comprehensive AI system using n8n workflows and specialized AI agents to provide farmers with intelligent recommendations for crops, farming techniques, fertilizers, and water management.
+A comprehensive AI system using n8n workflows and specialized AI agents to provide farmers with intelligent recommendations for crops, farming techniques, fertilizers, water management, storage, economics, and transportation.
 
 ## 🌾 Features
 
-### Annual Crops Support
-- **Crop Recommendation System**: AI-powered suggestions based on location, climate, soil type, and season
-- **5 Major Crops**: Wheat, Rice, Tomato, Potato, Corn with complete cultivation data
-
-### Tree Crops & Perennials
-- **Long-term Investment Planning**: ROI analysis for tree crops
-- **7 Tree Species**: Date Palm, Mango, Coconut, Citrus, Avocado, Olive, Pomegranate
-- **Intercropping Advice**: Optimize income during tree establishment phase
-- **Pruning Guides**: Age-specific pruning instructions
-- **Perennial Crop Management**: Long-term planning, pruning schedules, and lifecycle management
-
-### AI-Powered Intelligence
+### Core Production
 - **Multiple AI Provider Support**: Choose from OpenAI, Anthropic Claude, Google Gemini, Kimi2, or Grok
-- **Farming Techniques Education**: Best practices, modern techniques, and traditional methods for both annual and perennial crops
+- **Crop Recommendation System**: AI-powered suggestions based on location, climate, soil type, and season
+- **Farming Techniques Education**: Best practices, modern techniques, and traditional methods
 - **Fertilizer & Mineral Advisor**: Customized fertilizer recommendations with NPK ratios and micronutrients
 - **Water Management System**: Irrigation scheduling, water quality analysis, and conservation tips
 
-### Platform Features
+### Post-Harvest & Market
+- **Storage Advisory**: Optimal storage conditions, facility design, quality monitoring, and loss prevention
+- **Economics & Market Strategy**: Pricing strategies, market timing, profit analysis, and export opportunities
+- **Transportation & Logistics**: Vehicle selection, route optimization, packaging guidelines, and cost management
+
+### Platform
 - **Location-Based Intelligence**: Recommendations tailored to specific geographic regions
-- **Multi-Agent Architecture**: 5 specialized AI agents working together via n8n workflows
-- **REST API**: Complete API with 35+ endpoints for all farming needs
-- **Docker Deployment**: Production-ready containerized deployment
+- **8 Specialized AI Agents**: Complete farm-to-market guidance via n8n workflows
+- **35+ API Endpoints**: Comprehensive REST API for all farming needs
 
 ## 🏗️ Architecture
 
@@ -59,40 +53,25 @@ A comprehensive AI system using n8n workflows and specialized AI agents to provi
 ```
 ai_model/
 ├── agents/                      # AI Agent implementations
-│   ├── crop_advisor/           # Annual crop recommendation agent
-│   ├── tree_advisor/           # Tree crop & perennial advisor
+│   ├── crop_advisor/           # Crop recommendation agent
 │   ├── farming_techniques/     # Farming education agent
 │   ├── fertilizer_advisor/     # Fertilizer recommendation agent
 │   └── water_management/       # Water & irrigation agent
-├── api/                        # REST API
-│   ├── routes/                 # API routes (crops, trees, fertilizer, water, farming, farmer)
-│   └── server.js               # Express server setup
-├── config/                     # Configuration files
-│   ├── ai-client.js            # Unified AI provider client
-│   ├── config.js               # Environment configuration
-│   ├── database.js             # MongoDB connection
-│   └── logger.js               # Winston logger setup
-├── data/                       # Data files
-│   └── knowledge_base/         # AI knowledge bases
-│       ├── crops.js            # Annual crops database
-│       └── tree_crops.js       # Tree crops database
-├── database/                   # Database related files
-│   └── schemas/                # Mongoose schemas (8 models)
-├── docs/                       # Comprehensive documentation
-│   ├── SETUP_GUIDE.md          # Installation & setup
-│   ├── COMPLETE_API_REFERENCE.md  # Full API docs
-│   ├── USER_GUIDE.md           # Farmer-facing guide
-│   ├── DEVELOPER_GUIDE.md      # Technical implementation
-│   ├── EXAMPLES.md             # Tutorials & examples
-│   ├── TREE_CROPS_GUIDE.md     # Tree crop documentation
-│   └── TROUBLESHOOTING.md      # Common issues & solutions
 ├── n8n/                        # n8n workflow configurations
-│   ├── workflows/              # Workflow JSON files
-│   └── README.md               # N8N setup guide
-├── tests/                      # Test files
-├── docker-compose.yml          # Docker services configuration
-├── Dockerfile                  # API container definition
-└── package.json                # Node.js dependencies
+│   └── workflows/              # Workflow JSON files
+├── database/                   # Database related files
+│   ├── schemas/                # Database schemas
+│   └── migrations/             # Migration scripts
+├── api/                        # REST API
+│   ├── routes/                 # API routes
+│   ├── controllers/            # Request handlers
+│   └── middleware/             # Middleware functions
+├── config/                     # Configuration files
+├── data/                       # Data files
+│   ├── knowledge_base/         # AI knowledge bases
+│   └── sample_data/            # Sample datasets
+├── docs/                       # Documentation
+└── tests/                      # Test files
 ```
 
 ## 🚀 Quick Start
@@ -148,8 +127,6 @@ docker-compose up -d n8n
 ```bash
 npm run dev
 ```
-
-**📖 For detailed installation instructions, troubleshooting, and configuration, see the [Setup Guide](docs/SETUP_GUIDE.md).**
 
 ## 🔧 Configuration
 
@@ -207,65 +184,6 @@ The platform supports multiple AI providers. You can switch between them by sett
 
 **Note:** You only need to configure one AI provider, but you can configure multiple and switch between them.
 
-## 📚 Documentation
-
-Comprehensive documentation is available to help you get started and make the most of the platform:
-
-### Getting Started
-- **[Setup Guide](docs/SETUP_GUIDE.md)** - Complete installation and configuration instructions
-  - Docker installation (recommended)
-  - Manual installation
-  - Getting AI provider API keys
-  - First-time setup and verification
-  - Common installation issues
-
-- **[User Guide](docs/USER_GUIDE.md)** - Farmer-friendly guide to using the platform
-  - Getting started with the platform
-  - Annual crops recommendations
-  - Tree crops and long-term planning
-  - Fertilizer and water management
-  - Pest and disease management
-  - Success stories and tips
-
-### API & Integration
-- **[Complete API Reference](docs/COMPLETE_API_REFERENCE.md)** - Full API documentation
-  - All 35+ endpoints documented
-  - Request/response examples
-  - Error handling
-  - Code examples in cURL, JavaScript, Python
-
-- **[Examples & Tutorials](docs/EXAMPLES.md)** - Practical examples and tutorials
-  - Quick start examples
-  - Complete use case tutorials
-  - Integration examples (Node.js, Python, React)
-  - Advanced scenarios
-  - N8N workflow examples
-
-### Development
-- **[Developer Guide](docs/DEVELOPER_GUIDE.md)** - Technical implementation details
-  - Architecture deep-dive
-  - Creating new agents
-  - Adding new API endpoints
-  - Working with AI providers
-  - Testing guide
-  - Contributing guidelines
-
-- **[Tree Crops Guide](docs/TREE_CROPS_GUIDE.md)** - Comprehensive tree crop documentation
-  - Complete species information
-  - Economic analysis and ROI
-  - Management principles
-  - Regional recommendations
-
-### Support
-- **[Troubleshooting Guide](docs/TROUBLESHOOTING.md)** - Solutions to common issues
-  - Installation issues
-  - Connection issues
-  - API errors
-  - AI provider issues
-  - Database issues
-  - Performance optimization
-  - Debugging tips
-
 ## 📚 API Endpoints
 
 ### Annual Crops
@@ -279,17 +197,14 @@ Comprehensive documentation is available to help you get started and make the mo
 - `POST /api/trees/compare` - Compare tree crops
 - `POST /api/trees/intercropping` - Get intercropping advice
 - `GET /api/trees/:treeName/pruning` - Get pruning guide
-- `GET /api/trees/category/:category` - Browse by category
-- `GET /api/trees/info/:treeName` - Get detailed tree information
 
 ### Farming Techniques
 - `POST /api/farming/techniques` - Get farming techniques
 - `POST /api/farming/pest-management` - Get pest management advice
 - `POST /api/farming/crop-rotation` - Get crop rotation plan
 - `POST /api/farming/sustainable-practices` - Get sustainable practices
-- `GET /api/farming/organic-guide/:crop` - Get organic farming guide
 
-### Fertilizer Recommendations
+### Fertilizer
 - `POST /api/fertilizer/recommend` - Get fertilizer recommendations
 - `POST /api/fertilizer/soil-analysis` - Analyze soil deficiencies
 - `POST /api/fertilizer/organic-alternatives` - Get organic alternatives
@@ -301,6 +216,34 @@ Comprehensive documentation is available to help you get started and make the mo
 - `POST /api/water/conservation-strategies` - Get conservation tips
 - `POST /api/water/drought-management` - Get drought management plan
 
+### Storage & Post-Harvest
+- `POST /api/storage/recommend` - Get storage recommendations
+- `POST /api/storage/post-harvest` - Get post-harvest handling guidelines
+- `POST /api/storage/facility-design` - Get storage facility design
+- `POST /api/storage/quality-monitoring` - Get quality monitoring plan
+- `POST /api/storage/loss-prevention` - Get loss prevention strategies
+- `POST /api/storage/compare-methods` - Compare storage methods
+
+### Economics & Markets
+- `POST /api/economics/market-strategy` - Get market strategy
+- `POST /api/economics/optimal-timing` - Get optimal selling timing
+- `POST /api/economics/pricing-strategy` - Get pricing strategy
+- `POST /api/economics/profit-analysis` - Get profit analysis
+- `POST /api/economics/value-added` - Get value-added opportunities
+- `POST /api/economics/demand-forecast` - Get demand forecast
+- `POST /api/economics/export-opportunities` - Get export opportunities
+- `POST /api/economics/compare-crops` - Compare crop economics
+
+### Transportation & Logistics
+- `POST /api/hauling/transportation-plan` - Get comprehensive transport plan
+- `POST /api/hauling/vehicle-requirements` - Get vehicle specifications
+- `POST /api/hauling/packaging-guidelines` - Get packaging and loading guidelines
+- `POST /api/hauling/route-optimization` - Get route optimization
+- `POST /api/hauling/cost-optimization` - Get cost optimization strategies
+- `POST /api/hauling/quality-preservation` - Get quality preservation plan
+- `POST /api/hauling/compliance-requirements` - Get compliance and documentation
+- `POST /api/hauling/compare-modes` - Compare transportation modes
+
 ### Farmer Management
 - `POST /api/farmers/register` - Register new farmer
 - `GET /api/farmers/:farmerId` - Get farmer profile
@@ -311,7 +254,7 @@ Comprehensive documentation is available to help you get started and make the mo
 
 ## 🤖 AI Agents
 
-The platform uses 5 specialized AI agents, each powered by your choice of AI provider:
+The platform uses 8 specialized AI agents, each powered by your choice of AI provider:
 
 ### 1. Crop Advisor Agent
 **Location**: `agents/crop_advisor/`
@@ -320,10 +263,7 @@ Provides intelligent annual crop recommendations based on:
 - Geographic location and climate zone
 - Soil type and pH levels
 - Season and weather patterns
-- Farm size and water availability
 - Market demand and profitability
-
-**Supported Crops**: Wheat, Rice, Tomato, Potato, Corn
 
 ### 2. Tree Advisor Agent
 **Location**: `agents/tree_advisor/`
@@ -331,11 +271,8 @@ Provides intelligent annual crop recommendations based on:
 Specialized for perennial crops and long-term farming:
 - Tree crop recommendations with ROI analysis
 - Lifecycle planning (establishment to full production)
-- Intercropping strategies for establishment phase
-- Age-specific pruning guides
-- Variety selection and pollination requirements
-
-**Supported Trees**: Date Palm, Mango, Coconut, Citrus, Avocado, Olive, Pomegranate
+- Intercropping strategies
+- Pruning guides and variety selection
 
 ### 3. Fertilizer Advisor Agent
 **Location**: `agents/fertilizer_advisor/`
@@ -346,7 +283,6 @@ Recommends optimal fertilization:
 - Application timing and methods
 - Organic vs synthetic options
 - Growth stage-specific recommendations
-- Soil deficiency analysis
 
 ### 4. Farming Techniques Agent
 **Location**: `agents/farming_techniques/`
@@ -357,7 +293,6 @@ Educates farmers on best practices:
 - Pest and disease management (IPM)
 - Crop rotation strategies
 - Soil health management
-- Season-specific techniques
 
 ### 5. Water Management Agent
 **Location**: `agents/water_management/`
@@ -368,7 +303,36 @@ Optimizes water usage:
 - Drought management strategies
 - Water quality analysis
 - Irrigation method selection
-- Seasonal adjustments
+
+### 6. Storage Advisor Agent
+**Location**: `agents/storage_advisor/`
+
+Post-harvest storage optimization:
+- Optimal storage conditions (temperature, humidity)
+- Storage facility design and specifications
+- Quality monitoring and loss prevention
+- Post-harvest handling procedures
+- Storage method comparisons
+
+### 7. Economics Advisor Agent
+**Location**: `agents/economics_advisor/`
+
+Market strategy and profit optimization:
+- Market price analysis and timing
+- Pricing strategies and profit maximization
+- Value-added product opportunities
+- Export market identification
+- Demand forecasting and crop economics
+
+### 8. Hauling Advisor Agent
+**Location**: `agents/hauling_advisor/`
+
+Transportation and logistics planning:
+- Vehicle selection and specifications
+- Packaging and loading guidelines
+- Route optimization and cost management
+- Quality preservation during transport
+- Compliance and documentation requirements
 
 ## 🔄 N8N Workflows
 
@@ -381,40 +345,20 @@ The platform includes pre-configured n8n workflows:
 
 ## 📖 Usage Examples
 
-### Get Annual Crop Recommendations
+### Get Crop Recommendations
 
 ```bash
 curl -X POST http://localhost:3000/api/crops/recommend \
   -H "Content-Type: application/json" \
   -d '{
     "location": {
-      "country": "India",
-      "region": "Punjab",
-      "latitude": 30.9010,
-      "longitude": 75.8573
+      "latitude": 28.6139,
+      "longitude": 77.2090,
+      "region": "North India"
     },
-    "soilType": "clay loam",
-    "season": "kharif",
-    "farmSize": 5,
-    "waterAvailability": "canal irrigation"
-  }'
-```
-
-### Get Tree Crop Recommendations
-
-```bash
-curl -X POST http://localhost:3000/api/trees/recommend \
-  -H "Content-Type: application/json" \
-  -d '{
-    "location": {
-      "country": "Saudi Arabia",
-      "region": "Al-Ahsa"
-    },
-    "soilType": "sandy loam",
-    "waterAvailability": "drip irrigation",
-    "farmSize": 2,
-    "timeframe": "long-term",
-    "purpose": "commercial"
+    "soil_type": "loamy",
+    "season": "monsoon",
+    "farm_size": "5 acres"
   }'
 ```
 
@@ -425,37 +369,15 @@ curl -X POST http://localhost:3000/api/fertilizer/recommend \
   -H "Content-Type: application/json" \
   -d '{
     "crop": "wheat",
-    "farmSize": 10,
-    "unit": "hectares",
-    "soilAnalysis": {
-      "nitrogen": "medium",
-      "phosphorus": "low",
-      "potassium": "medium",
-      "pH": 6.8
+    "soil_analysis": {
+      "nitrogen": "low",
+      "phosphorus": "medium",
+      "potassium": "high",
+      "ph": 6.5
     },
-    "growthStage": "pre-planting"
+    "growth_stage": "vegetative"
   }'
 ```
-
-### Get Irrigation Schedule
-
-```bash
-curl -X POST http://localhost:3000/api/water/irrigation-schedule \
-  -H "Content-Type: application/json" \
-  -d '{
-    "crop": "wheat",
-    "soilType": "clay",
-    "climate": {
-      "temperature": 20,
-      "humidity": 60,
-      "rainfall": 50
-    },
-    "growthStage": "vegetative",
-    "irrigationMethod": "flood"
-  }'
-```
-
-**📖 For more examples, tutorials, and integration guides, see the [Examples & Tutorials](docs/EXAMPLES.md) documentation.**
 
 ## 🧪 Testing
 

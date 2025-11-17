@@ -10,11 +10,14 @@ import { connectDatabase } from '../config/database.js';
 
 // Import routes
 import cropRoutes from './routes/crop-routes.js';
+import treeRoutes from './routes/tree-routes.js';
 import fertilizerRoutes from './routes/fertilizer-routes.js';
 import farmingRoutes from './routes/farming-routes.js';
 import waterRoutes from './routes/water-routes.js';
 import farmerRoutes from './routes/farmer-routes.js';
-import treeRoutes from './routes/tree-routes.js';
+import storageRoutes from './routes/storage-routes.js';
+import economicsRoutes from './routes/economics-routes.js';
+import haulingRoutes from './routes/hauling-routes.js';
 
 const app = express();
 
@@ -56,11 +59,14 @@ app.get('/health', (req, res) => {
 
 // API Routes
 app.use('/api/crops', cropRoutes);
+app.use('/api/trees', treeRoutes);
 app.use('/api/fertilizer', fertilizerRoutes);
 app.use('/api/farming', farmingRoutes);
 app.use('/api/water', waterRoutes);
 app.use('/api/farmers', farmerRoutes);
-app.use('/api/trees', treeRoutes);
+app.use('/api/storage', storageRoutes);
+app.use('/api/economics', economicsRoutes);
+app.use('/api/hauling', haulingRoutes);
 
 // Welcome route
 app.get('/', (req, res) => {
@@ -74,7 +80,10 @@ app.get('/', (req, res) => {
       fertilizer: `${config.api.baseUrl}/api/fertilizer`,
       farming: `${config.api.baseUrl}/api/farming`,
       water: `${config.api.baseUrl}/api/water`,
-      farmers: `${config.api.baseUrl}/api/farmers`
+      farmers: `${config.api.baseUrl}/api/farmers`,
+      storage: `${config.api.baseUrl}/api/storage`,
+      economics: `${config.api.baseUrl}/api/economics`,
+      hauling: `${config.api.baseUrl}/api/hauling`
     }
   });
 });
