@@ -5,12 +5,14 @@ A comprehensive AI system using n8n workflows and specialized AI agents to provi
 ## 🌾 Features
 
 - **Multiple AI Provider Support**: Choose from OpenAI, Anthropic Claude, Google Gemini, Kimi2, or Grok
-- **Crop Recommendation System**: AI-powered suggestions based on location, climate, soil type, and season
-- **Farming Techniques Education**: Best practices, modern techniques, and traditional methods
+- **Crop Recommendation System**: AI-powered suggestions for annual crops based on location, climate, soil type, and season
+- **Tree Crops & Palms Support**: Specialized guidance for fruit trees (mango, citrus, avocado), date palms, coconut, olive, and more
+- **Farming Techniques Education**: Best practices, modern techniques, and traditional methods for both annual and perennial crops
 - **Fertilizer & Mineral Advisor**: Customized fertilizer recommendations with NPK ratios and micronutrients
 - **Water Management System**: Irrigation scheduling, water quality analysis, and conservation tips
 - **Location-Based Intelligence**: Recommendations tailored to specific geographic regions
 - **Multi-Agent Architecture**: Specialized AI agents working together via n8n workflows
+- **Perennial Crop Management**: Long-term planning, pruning schedules, and lifecycle management for tree crops
 
 ## 🏗️ Architecture
 

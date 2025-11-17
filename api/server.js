@@ -14,6 +14,7 @@ import fertilizerRoutes from './routes/fertilizer-routes.js';
 import farmingRoutes from './routes/farming-routes.js';
 import waterRoutes from './routes/water-routes.js';
 import farmerRoutes from './routes/farmer-routes.js';
+import treeRoutes from './routes/tree-routes.js';
 
 const app = express();
 
@@ -59,6 +60,7 @@ app.use('/api/fertilizer', fertilizerRoutes);
 app.use('/api/farming', farmingRoutes);
 app.use('/api/water', waterRoutes);
 app.use('/api/farmers', farmerRoutes);
+app.use('/api/trees', treeRoutes);
 
 // Welcome route
 app.get('/', (req, res) => {
@@ -68,6 +70,7 @@ app.get('/', (req, res) => {
     documentation: `${config.api.baseUrl}/docs`,
     endpoints: {
       crops: `${config.api.baseUrl}/api/crops`,
+      trees: `${config.api.baseUrl}/api/trees`,
       fertilizer: `${config.api.baseUrl}/api/fertilizer`,
       farming: `${config.api.baseUrl}/api/farming`,
       water: `${config.api.baseUrl}/api/water`,
